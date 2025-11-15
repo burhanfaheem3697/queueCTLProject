@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QueueCTL Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>QueueCTL Dashboard</h1>
+    <h2>Live Stats (Refreshes every 3s)</h2>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <h3>Job Counts</h3>
+        <div id="stats" class="log-display"></div>
+      </div>
+      <div class="stat-box">
+        <h3>Execution Times</h3>
+        <div id="exec" class="log-display"></div>
+      </div>
+    </div>
+
+    <h3>Recent Jobs (Top 10)</h3>
+    <table id="jobsTable">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Command</th>
+          <th>State</th>
+          <th>Priority</th>
+          <th>Updated</th>
+        </tr>
+      </thead>
+      <tbody id="jobs"></tbody>
+    </table>
+  </div>
+
+  <script src="script.js">
+  </script>
+</body>
+</html>

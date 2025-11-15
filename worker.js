@@ -12,14 +12,22 @@ async function executeJob(job) {
 
   try {
     // 1. Execute the command
-    const { stdout, stderr } = await exec(job.command);
+    const { stdout, stderr } = await exec(job.command, { 
+      timeout: job.job_timeout || 30000 // Use job's timeout or default
+    });
 
     // 2. Handle Success
     console.log(`[Worker] Job ${job._id} completed successfully.`);
     await jobsCollection.updateOne(
-      { _id: job._id },
-      { $set: { state: 'completed', output: stdout, updated_at: new Date() } }
-    );
+  { _id: job._id },
+  { $set: { 
+      state: 'completed', 
+      output: stdout, 
+      completed_at: new Date(),
+      updated_at: new Date() 
+    } 
+  }
+);
 
   } catch (error) {
     // 3. Handle Failure
@@ -53,15 +61,42 @@ async function executeJob(job) {
 // --- Atomic Job Fetching (The Concurrency Solution) ---
 async function findAndLockJob() {
   const jobsCollection = db.collection('jobs');
-  
-  // This is the atomic "find and lock" operation
+  const now = new Date();
+
+  // 1. Define the query for "available jobs"
+  const query = {
+    state: "pending",
+    $or: [
+      { run_at: null }, // Jobs that aren't scheduled
+      { run_at: { $lte: now } } // Jobs whose schedule time has passed
+    ]
+  };
+
+  // 2. Define the sort order
+  const sort = {
+    priority: -1, // Highest priority first (e.g., 10 runs before 1)
+    created_at: 1  // Oldest job first (within the same priority)
+  };
+
+  // 3. Add `processing_at` for our stats later
+  const update = { 
+    $set: { 
+      state: "processing", 
+      processing_at: new Date(), 
+      updated_at: new Date() 
+    } 
+  };
+
   const result = await jobsCollection.findOneAndUpdate(
-    { state: "pending" }, // Find a pending job
-    { $set: { state: "processing", updated_at: new Date() } }, // Lock it
-    { returnDocument: "after" } // Return the *updated* document
+    query,
+    update,
+    { 
+      sort: sort,
+      returnDocument: "after" 
+    }
   );
 
-  return result.value; // 'value' contains the job, or null if no job was found
+  return result;
 }
 
 // --- Retry Logic (Exponential Backoff) ---
@@ -103,7 +138,7 @@ async function startWorker() {
 
   while (!isShuttingDown) {
     const job = await findAndLockJob();
-
+    console.log(job);
     if (job) {
       await executeJob(job); // We have a job, process it
     } else {

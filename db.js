@@ -1,22 +1,47 @@
 // db.js
 const { MongoClient } = require('mongodb');
+const dotenv = require('dotenv');
+dotenv.config({quiet : true});
 
-const uri = "mongodb+srv://burhan:burhan786@cluster0.wqsbuod.mongodb.net/"; // Your MongoDB connection string
-const dbName = "queuectl";
+const uri = process.env.MONGODB_URI;
+const dbName = process.env.MONGODB_DB || 'queuectl';
+
+if (!uri) {
+  console.error("Error: MONGODB_URI is not set.");
+  process.exit(1);
+}
+
 let client;
-let db;
+let db; // This variable will hold our connection
 
 async function connectToDb() {
   if (db) {
-    return db;
+    return db; // Return existing connection
   }
-  client = new MongoClient(uri);
-  await client.connect();
-  db = client.db(dbName);
-  console.log("Connected to MongoDB");
-  return db;
+
+  try {
+    client = new MongoClient(uri);
+    
+    await client.connect();
+    db = client.db(dbName); // --- Assign the connection here ---
+
+    return db;
+  
+  } catch (e) {
+    console.error("Failed to connect to MongoDB", e);
+    process.exit(1);
+  }
 }
 
-// connectToDb();
+// --- THIS IS THE NEW FUNCTION ---
+function getDb() {
+  if (!db) {
+    // This should never happen if main() calls connectToDb() first
+    throw new Error('Database not connected. Call connectToDb() first.');
+  }
+  return db;
+}
+// --- END NEW FUNCTION ---
 
-module.exports = { connectToDb };
+// Export both functions
+module.exports = { connectToDb, getDb };
