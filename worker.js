@@ -140,11 +140,10 @@ async function startWorker() {
     const job = await findAndLockJob();
     console.log(job);
     if (job) {
-      await executeJob(job); // We have a job, process it
+      await executeJob(job);
     } else {
-      // No pending jobs, check for failed jobs to retry
+
       await requeueFailedJobs();
-      // Sleep for a bit to prevent busy-looping
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
   }
