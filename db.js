@@ -12,18 +12,18 @@ if (!uri) {
 }
 
 let client;
-let db; // This variable will hold our connection
+let db; 
 
 async function connectToDb() {
   if (db) {
-    return db; // Return existing connection
+    return db; 
   }
 
   try {
     client = new MongoClient(uri);
     
     await client.connect();
-    db = client.db(dbName); // --- Assign the connection here ---
+    db = client.db(dbName); 
 
     return db;
   
@@ -33,15 +33,12 @@ async function connectToDb() {
   }
 }
 
-// --- THIS IS THE NEW FUNCTION ---
 function getDb() {
   if (!db) {
-    // This should never happen if main() calls connectToDb() first
+   
     throw new Error('Database not connected. Call connectToDb() first.');
   }
   return db;
 }
-// --- END NEW FUNCTION ---
 
-// Export both functions
 module.exports = { connectToDb, getDb };

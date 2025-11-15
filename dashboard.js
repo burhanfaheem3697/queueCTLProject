@@ -1,4 +1,4 @@
-// dashboard.js
+
 const express = require('express');
 const path = require('path');
 const { getDb, connectToDb } = require('./db');
@@ -18,7 +18,7 @@ app.get('/api/stats', async (req, res) => {
   try {
     const jobs = db.collection('jobs');
 
-    // Get counts
+
     const counts = await jobs.aggregate([
       { $group: { _id: '$state', count: { $sum: 1 } } },
       { $sort: { _id: 1 } }

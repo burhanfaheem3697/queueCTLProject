@@ -6,8 +6,6 @@ async function registerStats(program) {
     .action(async () => {
       const db = getDb();
       const jobs = db.collection('jobs');
-
-      // 1. Get basic counts (like 'status' command)
       const counts = await jobs.aggregate([
         { $group: { _id: '$state', count: { $sum: 1 } } },
       ]).toArray();
@@ -15,7 +13,6 @@ async function registerStats(program) {
       console.log('--- Job Counts ---');
       console.table(counts);
 
-      // 2. Get execution time stats for completed jobs
       const execStats = await jobs.aggregate([
         { $match: { state: 'completed', processing_at: { $exists: true } } },
         { $project: {

@@ -2,10 +2,9 @@ async function refreshStats() {
   try {
     const res = await fetch('/api/stats');
     const data = await res.json();
-    
-    // --- 1. Format Job Counts ---
+ 
     const statsEl = document.getElementById('stats');
-    statsEl.innerHTML = ''; // Clear old logs
+    statsEl.innerHTML = ''; 
     if (data.counts.length > 0) {
       data.counts.forEach(item => {
         statsEl.innerHTML += `<div><span class="log-key">${item._id}:</span> <span class="log-value">${item.count}</span></div>`;
@@ -13,10 +12,9 @@ async function refreshStats() {
     } else {
       statsEl.innerHTML = `<div>No jobs found.</div>`;
     }
-    
-    // --- 2. Format Exec Times ---
+  
     const execEl = document.getElementById('exec');
-    execEl.innerHTML = ''; // Clear old logs
+    execEl.innerHTML = ''; 
     const execData = data.execStats.length > 0 ? data.execStats[0] : null;
     
     if (execData) {
@@ -27,9 +25,9 @@ async function refreshStats() {
       execEl.innerHTML = `<div>No completed jobs yet.</div>`;
     }
     
-    // --- 3. Format Jobs Table ---
+
     const jobsBody = document.getElementById('jobs');
-    jobsBody.innerHTML = ''; // Clear table
+    jobsBody.innerHTML = ''; 
     
     data.recentJobs.forEach(job => {
       jobsBody.innerHTML += `
@@ -44,7 +42,6 @@ async function refreshStats() {
     });
   } catch (e) {
     console.error("Failed to fetch stats", e);
-    // Ensure elements exist before trying to set innerText on error
     const statsEl = document.getElementById('stats');
     if (statsEl) {
       statsEl.innerText = "Error loading stats. Check console.";
@@ -52,7 +49,5 @@ async function refreshStats() {
   }
 }
 
-// Set the interval to run refreshStats and also call it once immediately.
-// 'defer' in the HTML script tag will run this after the page is parsed.
 setInterval(refreshStats, 3000);
-refreshStats(); // Initial load
+refreshStats();
