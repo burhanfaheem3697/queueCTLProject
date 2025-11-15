@@ -4,9 +4,8 @@ A minimal, robust background job queue system built with Node.js and MongoDB. Th
 
 It includes advanced features like Job Timeouts, Priority Queues, Scheduled Jobs, and a Live Web Dashboard.
 
-🌟 Live Demo (Placeholder)
+🌟 Live Demo (https://drive.google.com/file/d/1OGuSo-ymz6U58SFhl97dxsKV2jflgNMD/view?usp=drive_link)
 
-[Link to your working CLI demo video (e.g., Google Drive, Loom)]
 
 🎯 Core Features
 
