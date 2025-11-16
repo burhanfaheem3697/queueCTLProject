@@ -26,7 +26,7 @@ Follow these steps to get the system running locally.
 
 ```bash
 # 1. Clone the repository
-git clone <your-github-repo-url>
+git clone <github-repo-url>
 cd queuectl-project
 
 # 2. Install dependencies
